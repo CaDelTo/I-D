@@ -2,6 +2,19 @@ import ipaddress
 import socket, concurrent.futures
 
 def scan_ports(target, ports):
+    """
+    Scan the specified ports on the target IP address.
+
+    Args:
+        target (str): The target IP address to scan.
+        ports (list): A list of ports to scan.
+
+    Returns:
+        tuple: A tuple containing three lists - open_ports, closed_ports, and filtered_ports.
+            - open_ports: A list of open ports on the target IP address.
+            - closed_ports: A list of closed ports on the target IP address.
+            - filtered_ports: A list of filtered ports on the target IP address.
+    """
     open_ports = []
     closed_ports = []
     filtered_ports = []
@@ -17,11 +30,14 @@ def scan_ports(target, ports):
         else:
             closed_ports.append(port)
         sock.close()
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(scan_port, ports)
+
     return open_ports, closed_ports, filtered_ports
 
 commonPorts = [21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 443, 445, 993, 995, 1723, 3306, 3389, 5900, 8080]
+
 while True:
     print('-'*60)
     ip = input('Enter target IP: ')
